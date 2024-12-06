@@ -43,3 +43,12 @@ on:
 where $P$ is constructed as described in equations (1.3) of \cite{frangella2021randomizednystrompreconditioning}, with $\hat{A}_{nys}$
 replaced by $\hat{A}^{(k)}$ for a suitable value for $k$. Explain what this bound means in terms of the quality of the
 preconditioner. \\
+
+First we start by notcing that:
+\begin{equation*}
+    A_{\mu} = A + \muI = \hat{A}^{(k)} + \muI + A - \hat{A}^{(k)}
+\end{equation*}
+This then allows us to rewite $P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}}$ as:
+\begin{equation*}
+    P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}} = P^{-\frac{1}{1}}(\hat{A}^{(k)} + \muI)P^{-\frac{1}{2}} + P^{-\frac{1}{2}}(A-\hat{A}^{(k)}P^{-\frac{1}{2}}
+\end{equation*}
