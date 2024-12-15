@@ -10,7 +10,7 @@ for $k \geq (p-1)(\frac{1}{2} + \log{(\frac{\eta^{-1}}{2})})$ with $\text{sr}_p(
 Using the definition of $\text{sr}_p(A)$ from \cite{frangella2021randomizednystrompreconditioning} we can see that:
 \begin{align*}
     \text{sr}_p(A)\cdot\lambda_p &= \left[\lambda_p^{-1}\sum_{j>p}^{n}{\lambda_j}\right]\lambda_p \\
-                                 &= \sum_{j>p}^{n}{\lambda_j} \\
+                                 &= \sum_{j\geq p}^{n}{\lambda_j} \\
                                  &= \text{trace}(A - \mathcal{T}_{p-1}(A))
 \end{align*}
 Where $\mathcal{T}_{r}(A)$ denotes the best rank-$r$ approximation of A. We then also note that:
@@ -28,9 +28,9 @@ To complete the proof we let $\epsilon=2$, and then the equation above becomes:
 \end{equation*}
 According to the theorem in L6S76, for the above bound to hold we need to choose:
 \begin{align*}
-    k &\geq \frac{r}{\epsilon}+r\log{(\frac{1}{\epsilon\eta})} \\
+    k &\geq \frac{r}{\epsilon} + r \log{(\frac{1}{\epsilon\eta})}\\
       &= \frac{p-1}{2} + (p-1)\log{(\frac{\eta^{-1}}{2})} \\
-      &= (p-1)(\frac{1}{2} + \log{(\frac{\eta^{-1}}{2
+      &= (p-1)(\frac{1}{2} + \log{(\frac{\eta^{-1}}{2})}
 \end{align*}
 $\text{where } \eta = \text{trace}(A - \mathcal{T}_{p-1}(A))/\text{trace}(A)$. Thus completing the proof.
 
@@ -46,9 +46,353 @@ preconditioner. \\
 
 First we start by notcing that:
 \begin{equation*}
-    A_{\mu} = A + \muI = \hat{A}^{(k)} + \muI + A - \hat{A}^{(k)}
+    A_{\mu} = A + \mu I = \hat{A}^{(k)} + \mu I + \underbrace{A - \hat{A}^{(k)}}_{E}
 \end{equation*}
-This then allows us to rewite $P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}}$ as:
+This then allows us to rewite $S = P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}}$ as:
+\begin{align*}
+    &P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}} = P^{-\frac{1}{1}}(\hat{A}^{(k)} + \mu I)P^{-\frac{1}{2}} + P^{-\frac{1}{2}}(E)P^{-\frac{1}{2}} \\
+    & \text{with } P = \frac{1}{\lambda_{p-1} + \mu}U(\Lambda + \mu I)U^{\top} + (I-UU^{\top})
+\end{align*}
+Since $P$ is PSD it has a well defined sqaure root. Using the formula given by Frangella for $P^{-1}$ we can get:
 \begin{equation*}
-    P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}} = P^{-\frac{1}{1}}(\hat{A}^{(k)} + \muI)P^{-\frac{1}{2}} + P^{-\frac{1}{2}}(A-\hat{A}^{(k)}P^{-\frac{1}{2}}
+    P^{-\frac{1}{2}} = U(\frac{\Lambda + \mu I}{\lambda_{p-1}} + \mu)^{-\frac{1}{2}}U^{\top} + (I-UU^{\top})
+\end{equation*} 
+
+
+\newcommand{\preconditionFullForm}[1]{%
+    \left[U\left(\frac{\Lambda+ \mu I}{\lambda_{p-1} + \mu}\right)^{-\frac{1}{2}}U^{\top} + (I-UU^{\top})\right] 
+    #1 
+    \left[U\left(\frac{\Lambda+ \mu I}{\lambda_{p-1} + \mu}\right)^{-\frac{1}{2}}U^{\top} + (I-UU^{\top})\right]%
+}
+\newcommand{\precondition}[1]{P^{-\frac{1}{2}} (#1) P^{-\frac{1}{2}} }
+
+By Weyl's inequality we can bound the largest eigenvalue of $S$ as:
+\begin{align*}
+    \lambda_1(S) \leq \lambda_1(\precondition{\hat{A}^{(k)} + \mu I}) + \lambda_1(\precondition{E})
+\end{align*}
+Let's consider the first half of the equation. We can substitute our expression for $P^{-\frac{1}{2}}$ and compute the eigenvalue decomposition of $\hat{A}^{(k)}$ to get:
+\begin{align*}
+    &\left[U\left(\frac{\Lambda + \mu I}{\lambda_{p-1} + \mu}\right)^{-\frac{1}{2}}U^{\top} + (I-UU^{\top})\right] \cdot \\
+    &\left[U(\Lambda+\mu I)U^{\top} + (\mu I)(I-UU^{\top})\right] \cdot \\
+    &\left[U\left(\frac{\Lambda + \mu I}{\lambda_{p-1} + \mu}\right)^{-\frac{1}{2}}U^{\top} + (I-UU^{\top})\right] 
+\end{align*}
+We have to split $\hat{A}^{(k)} + \mu I$ into the component that lies in the subspace spanned by $U$ and into the space
+spanned by $U_{\perp}$, this is done by projecting $\mu I$ using the projector $I - UU^{\top}$. Now if we only look at
+the subspace spanned by $U$ we can see that the largest eigenvalue will be $\lambda_{p-1} + \mu$:
+\begin{align*}
+    U(\frac{\lambda_{p-1} + \mu}{\Lambda + \mu I})^{\frac{1}{2}}[\Lambda + \mu I](\frac{\lambda_{p-1} + \mu}{\Lambda + \mu I})^{\frac{1}{2}}U^{\top}
+\end{align*}
+The largest eigenvalue in the space spanned by $U_{\perp}$ is $\mu$. So overall the largest eigenvalue achieved on both
+these space is $\lambda_{p-1} + \mu$. Now we have to find an expression for the second part of Weyl's inequality above.
+\begin{align*}
+    \lambda_1(\precondition{E}) = \lambda_1(P^{-1}E) \leq \lambda_1(P^{-1})\lVert E \rVert_2 \\
+    & \text{with } P^{-1} = (\lambda_{p-1}+\mu)U(\Lambda + \mu I)^{-1}U^{\top} + (I-UU^{\top})
+\end{align*}
+To find $\lambda_1(P^{-1})$ we perform a smilar arguement as before. On the subspace spanned by $U$ the largest
+eigenvalue is $(\lambda_{p-1} + \mu) \ (\lambda_{p-1} + \mu) = 1$ on the subspace spanned by $U_{\perp}$ we see that the
+largest eigenvalue is also 1. So the largest eigenvalue attained on both these subspaces is 1, hence $\lambda_1(P^{-1})
+= 1$ and so we can say that $\lambda_1(\precondition{E}) = \lVert E \rVert_2$. So we arrive at the bound:
+\begin{align*}
+    \lambda_1(S) = \lambda_{p-1} + \mu + \lVert E \rVert_2
+\end{align*}
+Now we need to bound the minimum eigenvalues of $S$. Once again we can use Weyl's inequality for this:
+\begin{align*}
+    \lambda_n(S) \geq \lambda_n(\precondition{\hat{A}^{(K)} + \mu I}) + \lambda_n(\precondition{E})
+\end{align*}
+The smallest eigenvalue of $\precondition{E}$ is 0 since the rank-$(p-1)$ approximation we have is rank deficient and so
+the smallest eigenvalue is 0. Once again analyse the first term by looking on the subspace spanned by $U$ and the
+subspace spanned by $U_{\perp}$ 
+\begin{align*}
+    U(\frac{\lambda_{p-1} + \mu}{\Lambda + \mu I})^{\frac{1}{2}}[\Lambda + \mu I](\frac{\lambda_{p-1} + \mu}{\Lambda + \mu I})^{\frac{1}{2}}U^{\top}
+\end{align*}
+Since the approximations of RPChloesky are PSD, the minimum eigenvalue on the subspace spanned by $U$ is $\mu$. In the
+subpace spanned by $U_{\perp}$ we have $\mu I(I-UU^{\top})$ of which the minimum eigenvalue is $\mu$. Hence the smallest
+eigenvalue overall is just $\mu$ and so $\lambda_n(S) \geq \mu$. Now we can finally bound the condition number as:
+
+\begin{align*}
+    \kappa_2(P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}}) & \leq \frac{\mu + \lambda_{p-1} + \lVert A - \hat{A}^{(k)}\rVert_2}{\mu} \\
+                                                      &= \frac{1}{\mu}\left[\mu + \lambda_{p-1} + \lVert A - \hat{A}^{(k)}\rVert_2 \right]
+\end{align*}
+Then by using the linearity of the expectation operator we can say:
+\begin{align*}
+    \mathds{E}\left[\kappa_2(P^{-\frac{1}{2}}A_{\mu}P^{-\frac{1}{2}})\right] & \leq \mathds{E}\left(\frac{\mu + \lambda_{p-1} + \lVert A - \hat{A}^{(k)}\rVert_2}{\mu}\right) \\
+                                                      &= \frac{1}{\mu}\left(\mu + \lambda_{p-1} + \mathds{E}\left[\lVert A - \hat{A}^{(k)}\rVert_2\right] \right) \\
+                                                      &\leq \frac{1}{\mu}\left[\mu + \lambda_{p-1} + 3\cdot\text{trace}(A - \mathcal{T}_{p-1}(A))\right]
+\end{align*}
+$\text{for } k \geq (p-1)(\frac{1}{2} + \log{(\frac{\eta^{-1}}{2})}), \text{where } \eta = \text{trace}(A -
+\mathcal{T}_{p-1}(A)) / \text{trace}(A)$. \\
+Without preconditioning the condition number of $A_{\mu}$ would be $\lambda_1(A_{\mu}) / \lambda_n(A_{\mu})$ which can
+be large if the smallest eigenvalue of $A_{\mu}$ is small. However if we use RPChloesky, obtain a sufficently good
+approximation of A and use this preconditioning then the condition number will be $\leq 1 +
+\frac{3}{\mu}\cdot\text{trace}(A - \mathcal{T}_{p-1}(A))$ which could even be upperbounded by $1$ since we already
+obtain a good approximation of $A$ by using RPChloesky. However this does assume a quick decay of the singular values,
+which is the case for most scietific applications. Diaz et al. analyse a specific case of using RPChloesky and
+preconditioning in quantum chemistry in section (4.1) of their paper
+\cite{díaz2024robustrandomizedpreconditioningkernel}. They show how RPChloesky and preconditioning can reduce the
+relative residual in a ridge regression task to an order of $10^{-2}$ in $100$ iterations, highlighting how good the
+method is. Also iterative solvers like the Conjugate Gradient method is proportional to the sqaure root of the condition
+number so achieveing a low condition number through preconditioning would be ideal for these solvers.
+
+\section{Question 3}
+The proof of Proposition 2.2 from \cite{frangella2021randomizednystrompreconditioning} on the quality of the Nyström
+approximation (with Gaussian random sketches) uses a squared Chevet bound. Provide a detailed proof of this bound (see
+Section B.2 in \cite{frangella2021randomizednystrompreconditioning}) in your own words. Include all missing details
+(such as verifying the conditions of Slepian’s lemma). \\
+
+We first begin by defining two vector sets:
+\begin{align*}
+    U &= \{ S^{\top}a : \lVert a \rVert_2 = 1 \} \subset \mathbb{R}^m \\
+    V &= \{ Tb : \lVert b \rVert_2 = 1\} \subset \mathbb{R}^n 
+\end{align*}
+Where $S \in \mathbb{R}^{r \times m}$ and $T \in \mathbb{R}^{n \times s}$ are fixed matices and $a \in \mathbb{R}^{r}$
+and $b \in \mathbb{R}^{s}$ are vectors living on their respective $\ell_2$-normball. Now from these sets we choose two
+vectors $u \in U$ and $v \in V$ and then we consider the Gaussian process:
+\begin{align*}
+    Y_{uv} &= \langle u, Gv \rangle + \lVert S \rVert_2 \lVert v \rVert_2 \gamma \\
+    X_{uv} &= \lVert S \rVert \langle h, v \rangle + \lVert v \rVert \langle g, u \rangle
+\end{align*}
+Where $G \in \mathbb{R}^{m \times n}$ is a $(0, 1)$-Gaussian random matrix, $g, h$ are $\mathbb{R}^{m} \text{ and }
+\mathbb{R}^{n}$ $(0, 1)$-Gaussian random vectors and $\gamma \sim \mathcal{N}(0, 1)$. We also assume that $G, g, h,
+\text{ and } \gamma$ are all independant. \\
+
+Our first step is to analze the conditions regarding Slepian's Lemma. The two ocnditons of Slepian's Lemma are:
+\begin{align*}
+    \mathds{E}\left[X_{u_1,v_1}X_{u_2,v_2}\right] &\leq \mathds{E}\left[ Y_{u_1,v_1}Y_{u_2, v_2}\right] \; \text{for } u_1 \neq u_2 \text{ and } v_1 \neq v_2 \\
+    \mathds{E}\left[X_{u,v}X_{u,v}\right] &\leq \mathds{E}\left[ Y_{u,v}Y_{u,v}\right]
+\end{align*}
+Let's first analyze the autocorrelation terms. For convenience sake we will abreviate $X_{u,v} = X_i$ similarly for
+$Y_{u, v}$
+\begin{align*}
+    X_i^2 &= {\left[ \lVert S \rVert\langle h,v \rangle + \lVert v \rVert \langle g,u \rangle \right]}^2 \\
+          &= \lVert S \rVert^2 \langle h,v\rangle^2 + 2\lVert S \rVert\langle h,v\rangle \lVert v \rVert \langle g,u \rangle + {\lVert v \rVert}^2 {\langle g,u \rangle}^2 \\
+    \mathds{E}\left[ X_i^2\right] &= \lVert S \rVert^2 \mathds{E}\left[\langle h,v \rangle^2\right] + 2\lVert S \rVert \lVert v \rVert \mathds{E}\left[\langle h,v\rangle \langle g, u\rangle\right] + \lVert v \rVert^2 \mathds{E}\left[\langle g, u\rangle^2\right] \\
+\end{align*}
+We will analyse this equation term by term and use the fact that $E\left[X\right] = \operatorname{Var}\left[X\right] +
+{\mathds{E}\left[X\right]}^2$. We will also use the fact that if $x \sim \mathcal{N}(\mu, \Sigma_n)$ then for any fixed
+vector $a$ we have that $ax \sim \mathcal{N}(a\mu, a\Sigma_n a^{\top})$. Analysing the first term we see:
+\begin{align*}
+    \mathds{E}\left[\langle h, v\rangle\right] = \lVert v \rVert^2 + 0^2
+\end{align*}
+The third term can be analyzed in much the same way:
+\begin{align*}
+    \mathds{E}\left[\langle g, u\rangle\right] = \lVert u \rVert^2 + 0^2
+\end{align*}
+The second term can by analysed by first noting that $h$ and $g$ are independant as so:
+\begin{align*}
+    \mathds{E}\left[2\lVert S \rVert \lVert v \rVert\langle h,v\rangle \langle g,u \rangle\right] &= 2\lVert S \rVert\lVert v \rVert \mathds{E}\left[\langle h,v \rangle\right]\mathds{E}\left[\langle g,u \rangle\right] \\
+                                                                                                  &= 0
+\end{align*}
+And so we are left with:
+\begin{equation*}
+    \mathds{E}\left[X_i\right] = \lVert S \rVert^2 \lVert v \rVert^2 +  \lVert v \rVert^2\lVert u \rVert^2
 \end{equation*}
+$Y_i$ will be analysed in the same way:
+\begin{align*}
+    Y_i^2 &= \langle u, Gv \rangle^2 + 2\lVert S \rVert\lVert v \rVert\gamma\langle u, Gv \rangle^2 + \lVert S \rVert^2\lVert v \rVert^2\gamma^2 \\
+    \mathds{E}\left[Y_i^2\right] &= \mathds{E}\left[\langle u, Gv\rangle^2\right] + 2\lVert S \rVert\lVert v \rVert\mathds{E}\left[\gamma \langle u, Gv\rangle\right] + \lVert S \rVert^2\lVert v \rVert^2\mathds{E}\left[\gamma^2\right]
+\end{align*}
+The first and third terms are analysed in much the same way as before:
+\begin{align*}
+    \mathds{E}\left[ \lVert S \rVert^2 \lVert v \rVert^2 \gamma^2\right] &= \lVert S \rVert^2 \lVert v \rVert^2
+    \mathds{E}\left[ \langle u, Gv\rangle^2\right] = \lVert u \rVert^2 \lVert v \rVert^2
+\end{align*}
+The second term can be analyzed in the same way as before:
+\begin{align*}
+    \mathds{E}\left[2\lVert S \rVert\lVert v \rVert\gamma \langle u, Gv\rangle\right] &= 2\lVert S \rVert\lVert v \rVert\mathds{E}\left[\gamma \langle u, Gv\rangle\right] \\
+                                                                                      &= 2\lVert S \rVert\lVert v \rVert\mathds{E}\left[\gamma\right]\mathds{E}\left[\langle u, Gv\rangle\right] \\
+                                                                                      &= 0
+\end{align*}
+And so we are left with:
+\begin{equation*}
+    \mathds{E}\left[Y_i^2\right] = \lVert S \rVert^2 \lVert v \rVert^2 + \lVert u \rVert^2 \lVert v \rVert^2
+\end{equation*}
+Comparing $\mathds{E}\left[X_i^2\right]$ with $\mathds{E}\left[Y_i^2\right]$ we see that the second condition of
+Slepian's lemma is satisfied. Now we will look at the first condition. We begin by letting:
+\begin{align*}
+    X_1 = \lVert S \rVert \langle h, v_1 \rangle + \lVert v_1 \rVert \langle g, u_1 \rangle \\
+    X_2 = \lVert S \rVert \langle h, v_2 \rangle + \lVert v_2 \rVert \langle g, u_2 \rangle
+\end{align*} 
+We can multiply and expand out the terms to get:
+
+
+\newcommand{\pexp}[1]{\mathds{E}\left[#1\right]}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\dotprod}[1]{\langle #1 \rangle}
+\begin{align*}
+    X_1X_2 &= \lVert S \rVert^2 \langle h, v_1\rangle \langle h, v_2 \rangle + \lVert S \rVert \lVert v_2 \rVert \langle h, v_1 \rangle \langle g, u_2 \rangle \\ 
+           &= +\lVert S \rVert \lVert v_1 \rVert \langle h, v_2 \rangle \langle g, u_1 \rangle + \lVert v_1 \rVert \lVert v_2 \rVert \langle g, u_1 \rangle \langle g, u_2 \rangle \\
+    \pexp{X_1X_2} &= \lVert S \rVert^2\pexp{\langle h, v_1 \rangle \langle h, v_2\rangle} + \lVert S \rVert \lVert v_2\rVert \pexp{\langle h, v_1 \rangle \langle g, u_2 \rangle} \\ 
+                  &= + \lVert S \rVert \lVert v_1 \rVert \pexp{\langle h, v_2 \rangle \langle g, u_1 \rangle} + \lVert v_1 \rVert \lVert v_2 \rVert \pexp{\langle g, u_1 \rangle \langle g, u_2 \rangle}
+\end{align*}
+Once again we can analyse this term by term. Looking at the first term we have:
+\begin{align*}
+    &\pexp{\lVert S \rVert^2 \langle h, v_1 \rangle \langle h, v_2 \rangle} = \lVert S \rVert^2 \pexp{\langle h, v_1 \rangle \langle h, v_2 \rangle}
+    &= \lVert S \rVert^2 \pexp{\underbrace{\langle h,h\rangle}_{\pexp{\cdot} = 0} + \underbrace{\langle h, v_1 \rangle}_{\pexp{\cdot} = 0} + \underbrace{\langle h, v_2 \rangle}_{\pexp{\cdot} = 0} + \underbrace{\langle v_1, v_2 \rangle}_{\pexp{\cdot} \neq 0}}
+\end{align*}
+By the properties of multiplication with standard gaussian random vectors the above equation simplifies to:
+\begin{equation*}
+    \pexp{\lVert S \rVert^2 \langle h, v_1 \rangle \langle h, v_2 \rangle} = \norm{S}^2\dotprod{v_1, v_2}
+\end{equation*}
+Now we look at the second and third term, and by independence and the properties of multiplication with standard gaussian random vectors we have:
+\begin{align*}
+    \pexp{\norm{S}\norm{v_2}\dotprod{g, u_2}\dotprod{h,u_1}} = 0 \\
+    \pexp{\norm{S}\norm{v_1}\dotprod{g, u_1}\dotprod{h,u_2}} = 0 
+\end{align*}
+Regarding the fourth term, once it is expanded all the terms multiplied with the gaussian vector in expectation will be
+zero so the only term left will be:
+\begin{align*}
+    \pexp{\norm{v_1}\norm{v_2}\dotprod{g, u_1}\dotprod{g, u_2}} &= \norm{v_1}\norm{v_2}\pexp{\dotprod{u_1, u_2}} \\
+                                                                &= \norm{v_1}\norm{v_2}\dotprod{u_1, u_2}
+\end{align*}
+So finally we are left with:
+\begin{align*}
+    \pexp{X_1X_2} = \norm{S}^2\dotprod{v_1, v_2} + \norm{v_1}\norm{v_2}\dotprod{u_1, u_2}
+\end{align*}
+Now we will perform the same operations for $Y_1Y_2$. Letting:
+\begin{align*}
+    Y_1 &= \dotprod{u_1, Gv_1} + \norm{S}\norm{v_1}\gamma \\
+    Y_2 &= \dotprod{u_2, Gv_2} + \norm{S}\norm{v_2}\gamma
+\end{align*}
+We can multiply and expand out the terms to get:
+\begin{align*}
+    Y_1Y_2 = &\dotprod{u_1, Gv_1}\dotprod{u_2, Gv_2} + \norm{S}\norm{v_1}\gamma\dotprod{u_2, Gv_2}\\ 
+             &+ \norm{S}\norm{v_2}\gamma\dotprod{u_1, Gv_1} + \norm{S}^2\norm{v_1}\norm{v_2}\gamma^2
+\end{align*}
+\begin{align*}
+    \pexp{Y_1Y_2} = &\pexp{\dotprod{u_1, Gv_1}\dotprod{u_2, Gv_2}} + \norm{S}\norm{v_1}\pexp{\gamma\dotprod{u_2, Gv_2}}\\ 
+                    &+ \norm{S}\norm{v_2}\pexp{\gamma\dotprod{u_1, Gv_1}} + \norm{S}^2\norm{v_1}\norm{v_2}\pexp{\gamma^2}
+\end{align*}
+As before, due to the properties of independence and multiplication with standard gaussian random vectors, the second
+and third terms in expectaion equal 0:
+\begin{equation*}
+    \norm{S}\norm{v_1}\pexp{\gamma\dotprod{u_2, Gv_2}} = 0 \\
+    \norm{S}\norm{v_2}\pexp{\gamma\dotprod{u_1, Gv_1}} = 0
+\end{equation*}
+The fourth term in expectation is:
+\begin{align*}
+    \norm{S}^2\norm{v_1}\norm{v_2}\pexp{\gamma^2} &= \norm{S}^2\norm{v_1}\norm{v_2}\left[\operatorname{Var}\left(\gamma\right) + \pexp{\gamma}\right] \\
+                                                  &= \norm{S}^2\norm{v_1}\norm{v_2}   
+\end{align*}
+The first term needs some careful consideration. We fist see that the dot product can be written as:
+\begin{equation*}
+    \dotprod{u_1, Gv_1} = \sum_{i,j}{u_iG_{ij}v_j}
+\end{equation*}
+Next we begin by noting that $\pexp{G_{ij}G_{kl}} = 0 \; \forall \; i \neq k \text{ and } j \neq l$. So the first term, in
+expectation reduces to:
+\begin{equation*}
+    \pexp{\dotprod{u_1, Gv_1}\dotprod{u_2, Gv_2}} = \dotprod{u_1, u_2}\dotprod{v_1, v_2}
+\end{equation*}
+Putting this all together we get:
+\begin{equation*}
+    \pexp{Y_1Y_2} = \dotprod{u_1, u_2}\dotprod{v_1, v_2} + \norm{S}^2\norm{v_1}\norm{v_2}
+\end{equation*}
+We can now use a double application of the Cauchy-Schwarz inequality (one on $\pexp{X_1X_2}$ and another on
+$\pexp{Y_1Y_2}$) to see that $\pexp{X_1X_2} \leq \pexp{Y_1Y_2}$. Thereby fulfilling the second condition for Slepian’s
+lemma. Thereby can also conclude that:
+\begin{equation*}
+    \mathbb{P}\left(\underset{u, v}{\max} Y_{uv} > t\right) \leq \mathbb{P}\left(\underset{u, v}{\max} X_{uv} > t\right)
+\end{equation*}
+For convenience we will also introduce the notation $X_{+}= \max\{X, 0\}$. We will now begin to prove the sqaured Chevet
+bound. We start off by stating:
+\begin{align*}
+    \pexp{\underset{u, v}{\max} \left( Y_{uv}\right)_{+}^2 } = \pexp{\underset{\norm{a}=1,\;\norm{b}=1}{\max}\left(\left[\dotprod{S^{\top}a, GTb} + \norm{S}\norm{Tb}\gamma\right]_{+}^{2}\right)}
+\end{align*}
+Next the paper applies Jensen's inequality. However we should first make sure that Jensen's inequality is valid for this
+function. Let's first breakdown the function inside the expectation as a composition of functions:
+\begin{align*}
+    \pexp{\underbrace{\underset{\norm{a}=1, \norm{b}=1}{\max}\left\{ \left( \dotprod{S^{\top}a, GTb} + \norm{S}\norm{Tb}\gamma \right)_{+}^{2} \right\}}_{g(x)}}
+\end{align*}
+It is evident that $g(x)$ is composed of $f(x) = x_{+}^{2}$ and $k(x) = \dotprod{S^{\top}a, GTb} + \norm{S}\norm{Tb}\gamma$ The former is a convex function and the latter is a linear function (which is both convex and
+concave). Their composition is also a convex function, and taking the max leaves it as a convex function. Thus we can
+apply Jensen's inequality to in this context. In this next step we integrate out the terms with $\gamma$ and we are left
+with:
+\begin{align*}
+    \pexp{\underset{\norm{a}=1, \norm{b}=1}{\max}\left\{ \left( \dotprod{S^{\top}a, GTb} + \norm{S}\norm{Tb}\gamma \right)_{+}^{2} \right\}} = \mathds{E}_{G}\left[ \underset{\norm{a}=1, \norm{b}=1}{\max}(\dotprod{S^{\top}a, GTb}^2)_{+} \right]
+\end{align*}
+Now we can see that the dot product is just the 2->2 matrix operator norm. Thus we can write:
+\begin{align*}
+    \mathds{E}_{G}\left[ \underset{\norm{a}=1, \norm{b}=1}{\max}(\dotprod{S^{\top}a, GTb}^2)_{+} \right] = \mathds{E}_{G}\left[ \norm{SGT}^2 \right]
+\end{align*}
+So we can see that $\pexp{\underset{u, v}{\max} \left( Y_{uv}\right)_{+}^2 }$ acts as a majorizer of
+$\mathds{E}_{G}\left[ \norm{SGT}^2 \right]$. Now we will perform the same calculation with $X_{uv}$. We can see that:
+\begin{align*}
+    \pexp{\max\left\{ {(X_{uv})}_{+}^2\right\}} &\leq \pexp{\max\left\{ X_{uv}^2\right\}} \\
+                                              &= \pexp{\underset{\norm{a}=1, \norm{b}=1}{\max}\left\{(\norm{S}\dotprod{h, Tb} + \norm{Tb}\dotprod{g, S^{\top}a})^2\right\}}
+\end{align*}
+We can expand out the terms and use Cauchy-Schwarz to turn the dot prodcts into a product of norms:
+\begin{equation*}
+   \left(\norm{S}\dotprod{h, Tb} + \norm{Tb}\dotprod{g, S^{\top}a}\right)^2 = \norm{S}^2\dotprod{h, Tb}^2 + 2\norm{S}\norm{Tb}\dotprod{h, Tb}\dotprod{g, S^{\top}a} + \norm{Tb}^2\dotprod{g, S^{\top}a}^2
+\end{equation*}
+Let's analyse this term by term. We will make extensive use of the Cauchy-Schwarz inequality. The first term can be bounded as:
+\begin{align*}
+    \norm{S}^2\dotprod{h, Tb}^2 &= \norm{S}^2\dotprod{T^{\top}h, b} \\
+                                &\leq \norm{S}^2\norm{T^{\top}h}^2\norm{b}^2 \\
+                                &= \norm{S}^2\norm{T^{\top}h}^2
+\end{align*}
+The second term is bounded as:
+\begin{align*}
+    2\norm{S}\norm{Tb}\dotprod{h, Tb}\dotprod{g, S^{\top}a} &= 2\norm{S}\norm{Tb}\dotprod{T^{\top}h, b}\dotprod{Sg, a} \\
+                                                            &\leq 2\norm{S}\norm{Tb}\norm{T^{\top}h}\norm{b}\norm{Sg}\norm{a} \\
+                                                            &= 2\norm{S}\norm{Tb}\norm{T^{\top}h}\norm{Sg}
+\end{align*}
+The third term is bounded as:
+\begin{align*}
+    \norm{Tb}^2\dotprod{g, S^{\top}a}^2 &= \norm{Tb}^2\dotprod{Sg, a}^2 \\
+                                       &\leq \norm{Tb}^2\norm{Sg}^2\norm{a}^2 \\
+                                       &= \norm{Tb}^2\norm{Sg}^2
+\end{align*}
+So we end up with:
+\begin{align*}
+    \pexp{\underset{\norm{a}=1, \norm{b}=1}{\max}\left\{(\norm{S}\dotprod{h, Tb} + \norm{Tb}\dotprod{g, S^{\top}a})^2\right\}} &\leq \pexp{\norm{S}^2\norm{T^{\top}h}^2 + 2\norm{S}\norm{Tb}\norm{T^{\top}h}\norm{Sg}} \\
+                                                                                                                               &+ \pexp{\norm{Tb}^2\norm{Sg}^2}
+\end{align*}
+Since h and g are independant and they are standard normal vectors, we have the equality:
+\begin{align*}
+    \pexp{\norm{T^{\top}h}^2} &= \norm{T}_F^2 \\
+    \pexp{\norm{Sg}^2} &= \norm{S}_F^2
+\end{align*}
+Next we need to make use of Hölder's inequality for expectations which (in our particular case of the $\ell_2$ norm) can be written as:
+\begin{align*}
+    \pexp{\norm{XY}} \leq \sqrt{\pexp{\norm{X}^2}}\sqrt{\pexp{\norm{Y}^2}}
+\end{align*} 
+Using this version of Hölder's inequality we can bound the middle term as:
+\begin{align*}
+    2\norm{S}\norm{Tb}\pexp{\norm{T^{\top}h}\norm{Sg}} &\leq 2\norm{S}\norm{Tb}\sqrt{\pexp{\norm{T^{\top}h}^2}}\sqrt{\pexp{\norm{Sg}^2}} \\
+                                                       &= 2\norm{S}\norm{Tb}\sqrt{\norm{T}_F^2}\sqrt{\norm{S}_F^2} \\
+                                                       &= 2\norm{S}\norm{Tb}\norm{T}_F\norm{S}_F
+\end{align*}
+Using the two factrs above we can bound $\pexp{\norm{S}^2\norm{T^{\top}h}^2 + 2\norm{S}\norm{Tb}\norm{T^{\top}h}\norm{Sg} + \norm{Tb}^2\norm{Sg}^2}$ as:
+\begin{align*}
+    \pexp{\norm{S}^2\norm{T^{\top}h}^2 + 2\norm{S}\norm{Tb}\norm{T^{\top}h}\norm{Sg} + \norm{Tb}^2\norm{Sg}^2} &\leq \norm{S}^2\norm{T}_F^2 + 2\norm{S}\norm{T}\norm{T}_F\norm{S}_F  \\
+                                                                                                               &+ \norm{Tb}^2\norm{S}_F^2
+\end{align*}
+As we can see this is a perfect square. After factorizing we are left with the following bound:
+\begin{align*}
+    \pexp{\max\left\{ {(X_{uv})}_{+}^2\right\}} \leq \left( \norm{S}\norm{T}_F +\norm{T}\norm{S}_F\right)^2
+\end{align*}
+Next we use Corolary 3.12 on p.75 of \cite{Ledoux2011Probability} and some relations from probability to finish the question. The calculations of which
+are listed below. Recall that for a random variable $Z$ we have:
+\begin{equation*}
+    \pexp{Z^2} = \int_{0}^{\infty}{2x\mathbb{P}\left(Z > x \right)} dx
+\end{equation*}
+This then allows us to say:
+\begin{align*}
+    \pexp{\norm{SGT}^2} \leq \pexp{\underset{u,v}{\max}\left\{ \left(Y_{uv}\right)_{+}^2 \right \}} = \int_{0}^{\infty}{2t\mathbb{P}\left(\underset{u,v}{\max}\left\{ \left(Y_{uv}\right)_{+} \right\} > t \right)} dt 
+\end{align*}
+Since everything here is positive we can drop $(\cdot)_{+}$ and apply Corolary 3.12:
+\begin{align*}
+    \int_{0}^{\infty}{2t\mathbb{P}\left(\underset{u,v}{\max}\left\{ \left(Y_{uv}\right)_{+} \right\} > t \right)} dt  &= \int_{0}^{\infty}{2t\mathbb{P}\left(\underset{u,v}{\max}\left\{ \left(Y_{uv}\right) \right\} > t \right)} dt \\
+                                                                                                                    &\leq \int_{0}^{\infty}{2t\mathbb{P}\left(\underset{u,v}{\max}\left\{ \left(X_{uv}\right) \right\} > t \right)} dt 
+\end{align*}
+Again we can bring in the $(\cdot)_{+}$ without changing this integral:
+\begin{align*}
+    \int_{0}^{\infty}{2t\mathbb{P}\left(\underset{u,v}{\max}\left\{ \left(X_{uv}\right) \right\} > t \right)} dt &= \int_{0}^{\infty}{2t\mathbb{P}\left(\underset{u,v}{\max}\left\{ \left(X_{uv}\right)_{+} \right\} > t \right)} dt \\
+                                                                                                               &= 2*\pexp{\underset{u,v}{\max}\left\{(X_{uv})\right\}} \\
+                                                                                                               &\leq  2*\left( \norm{S}\norm{T}_F +\norm{T}\norm{S}_F\right)^2
+\end{align*}
+And so we have complated the proof showing that:
+\begin{equation*}
+    \pexp{\norm{SGT}^2} \leq 2\left( \norm{S}\norm{T}_F +\norm{T}\norm{S}_F\right)^2
+\end{equation*}
+
+\section{Question 4}
