@@ -121,6 +121,16 @@ Then by using the linearity of the expectation operator we can say:
 \end{align*}
 $\text{for } k \geq (p-1)(\frac{1}{2} + \log{(\frac{\eta^{-1}}{2})}), \text{where } \eta = \text{trace}(A -
 \mathcal{T}_{p-1}(A)) / \text{trace}(A)$. \\
+While this bound is good, we can get a simpler bound if we make some assumptions on $p-1$. We can leverage Lemma 2.1
+Item 4 and Lemma 5.4 Item 1 in \cite{frangella2021randomizednystrompreconditioning}. Since these items are agnostic of
+the approximation algorithm used, we can use them without proof. If we choose $\gamma > 0$ and if we choose $p-1 \geq
+(1 + \gamma^{-1})\operatorname{deff}(\mu)$ then $\lambda_{p-1} \leq \gamma\mu$. So if we choose $\gamma = 1$ then we
+get:
+\begin{align*}
+    \frac{1}{\mu}\left[\mu + \lambda_{p-1} + 3\cdot\text{trace}(A - \mathcal{T}_{p-1}(A))\right] = 2 + \frac{3}{\mu}\cdot\text{trace}(A - \mathcal{T}_{p-1}(A))
+\end{align*}
+
+
 Without preconditioning the condition number of $A_{\mu}$ would be $\lambda_1(A_{\mu}) / \lambda_n(A_{\mu})$ which can
 be large if the smallest eigenvalue of $A_{\mu}$ is small. However if we use RPChloesky, obtain a sufficently good
 approximation of A and use this preconditioning then the condition number will be $\leq 1 +
@@ -396,3 +406,4 @@ And so we have complated the proof showing that:
 \end{equation*}
 
 \section{Question 4}
+The results of this section can be found by runnning the MATLAB script.

@@ -92,6 +92,7 @@
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{epfl_red}{RGB}{255, 0, 0}
 
 \lstdefinestyle{codeStyle}{
     backgroundcolor=\color{backcolour},   
@@ -162,8 +163,8 @@
 
 %% Format Chapter headings appropriately
 \usepackage{titlesec}
-\titleformat{\chapter}[hang]{\normalfont\huge\bfseries\color{tcd_blue}}{\thechapter}{1cm}{}{}
-
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries\color{epfl_red}}{\thechapter}{1cm}{}{}
+\titleformat{\section}{\color{epfl_red}\normalfont\Large\bfseries}{\color{epfl_red}\thesection}{1em}{}
 \title{\thesistitle}
 \author{\authorname}
 
@@ -184,7 +185,7 @@
 
 \input{ch-title.tex}
 \pagenumbering{roman}
-\section*{\Huge\textcolor{tcd_blue}{Declaration}}
+\section*{\Huge\textcolor{epfl_red}{Declaration}}
 I hereby declare that this work is fully my own.
 \vspace{1cm}
 

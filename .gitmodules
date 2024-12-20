@@ -1,0 +1,3 @@
+[submodule "final_project/mnist-matlab"]
+	path = final_project/mnist-matlab
+	url = git@github.com:sunsided/mnist-matlab.git
