@@ -134,9 +134,10 @@ end
 clear
 close all
 % Experimentation parameters
-sigmas = logspace(-4, 4, 30); % Different scale parameters (logarithmic scale)
-mus = logspace(-4, 4, 30); % Different regularization parameters (logarithmic scale)
-N = 2000;
+num_el = 10;
+sigmas = logspace(-4, 4, 10); % Different scale parameters (logarithmic scale)
+mus = logspace(-4, 4, 10); % Different regularization parameters (logarithmic scale)
+N = 1000;
 max_pcg_iters = 5000;
 rank = 30;
 pcg_tol = 1e-14;
@@ -225,7 +226,7 @@ clim([min(log10(time_rpc(:))), max(log10(time_rpc(:)))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Log time for RPC (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('time_rpc_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'time_rpc.png'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), log10(time_nys)); set(gca, 'YDir', 'normal');
@@ -235,7 +236,7 @@ clim([min(log10(time_nys(:))), max(log10(time_nys(:)))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Log time for NYS (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('time_nys_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'time_nys.png'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), log10(time_direct)); set(gca, 'YDir', 'normal');
@@ -245,7 +246,7 @@ clim([min(log10(time_direct(:))), max(log10(time_direct(:)))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Log time for CGS Solve (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('time_direct_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'time_direct.png'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), residual_direct); set(gca, 'YDir', 'normal');
@@ -255,7 +256,7 @@ clim([min(residual_direct(:)), max(residual_direct(:))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Residul for CGS Solve (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('residual_direct_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'residual_direct.png'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), residual_nys); set(gca, 'YDir', 'normal');
@@ -265,7 +266,7 @@ clim([min(residual_nys(:)), max(residual_nys(:))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Residul for Nys Solve (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('residual_nys_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'residual_nyspng'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), residual_rpc); set(gca, 'YDir', 'normal');
@@ -275,7 +276,7 @@ clim([min(residual_rpc(:)), max(residual_rpc(:))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Residul for RPC Solve (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('residual_rpc_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'residual_rpc.png'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), iter_direct); set(gca, 'YDir', 'normal');
@@ -285,7 +286,7 @@ clim([min(iter_direct(:)), max(iter_direct(:))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Iteration for CGS (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('iter_cgs_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'iter_cgs.png'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), iter_nys); set(gca, 'YDir', 'normal');
@@ -295,7 +296,7 @@ clim([min(iter_nys(:)), max(iter_nys(:))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Iteration for NYS Solve (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('iter_nys_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'iter_nys.png'));
 
 figure;
 imagesc(log10(mus), log10(sigmas), iter_rpc); set(gca, 'YDir', 'normal');
@@ -305,8 +306,11 @@ clim([min(iter_rpc(:)), max(iter_rpc(:))]);
 xlabel('log_{10}(\mu)');
 ylabel('log_{10}(\sigma)');
 title(sprintf('Iteration for RPC Solve (n=%d, rank=%d, tol=%e)', N, rank, pcg_tol));
-saveas(gcf, fullfile('plots', sprintf('iter_rpc_n%d_rank%d_tol%e_sigma[%e,%e]_mu[%e,%e].png', N, rank, pcg_tol, min(sigmas), max(sigmas), min(mus), max(mus))));
+saveas(gcf, fullfile('plots', 'iter_rpc.png'));
 %% Running Kernel Ridge Regression
+%This code performs KRR on the MNIST dataset to see if it can 
+%differentiate between 2 and 7. We use RPCholesky to reduce the number
+%of iterations to solve the system
 clear
 close all
 
@@ -364,7 +368,7 @@ pcg_tol = 1e-16;
 train_kernel = genGaussianKernel(trainImages, trainImages, sigma);
 train_kernel = train_kernel + mu*eye(size(train_kernel, 1));
 fprintf("Running RPCholesky...\n")
-[~, ~, U, L] = rpCholeskey(train_kernel, 2000);
+[~, ~, U, L] = rpCholeskey(train_kernel, 500);
 fprintf("Constructing Preconditioner...\n")
 P = genPreconditionerUL(U, L, mu);
 fprintf("Performimg PCG...\n")
