@@ -134,13 +134,13 @@ end
 clear
 close all
 % Experimentation parameters
-num_el = 10;
-sigmas = logspace(-4, 4, 10); % Different scale parameters (logarithmic scale)
-mus = logspace(-4, 4, 10); % Different regularization parameters (logarithmic scale)
+num_el = 40;
+sigmas = logspace(-4, 4, num_el); % Different scale parameters (logarithmic scale)
+mus = logspace(-4, 4, num_el); % Different regularization parameters (logarithmic scale)
 N = 1000;
 max_pcg_iters = 5000;
 rank = 30;
-pcg_tol = 1e-14;
+pcg_tol = 1e-12;
 time_rpc = zeros(length(sigmas), length(mus));
 time_nys = zeros(length(sigmas), length(mus));
 time_direct = zeros(length(sigmas), length(mus));
@@ -155,7 +155,7 @@ iter_nys = zeros(length(sigmas), length(mus));
 iter_direct = zeros(length(sigmas), length(mus));
 
 
-run_avg = 1;
+run_avg = 2;
 totalIterations = length(sigmas) * length(mus)*run_avg;
 hWait = waitbar(0, 'Initializing...', 'Name', 'Processing Sigma and Mu');
 startTime = tic;

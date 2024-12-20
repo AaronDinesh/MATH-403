@@ -9,7 +9,7 @@ report:
 	bibtex $(DOCNAME).aux
 	pdflatex $(DOCNAME).tex
 	pdflatex $(DOCNAME).tex
-
+	pdflatex $(DOCNAME).tex
 view: report
 	open $(DOCNAME).pdf
 

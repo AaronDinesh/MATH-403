@@ -136,9 +136,8 @@ be large if the smallest eigenvalue of $A_{\mu}$ is small. However if we use RPC
 approximation of A and use this preconditioning then the condition number will be $\leq 1 +
 \frac{3}{\mu}\cdot\text{trace}(A - \mathcal{T}_{p-1}(A))$ which could even be upperbounded by $1$ since we already
 obtain a good approximation of $A$ by using RPChloesky. However this does assume a quick decay of the singular values,
-which is the case for most scietific applications. Diaz et al. analyse a specific case of using RPChloesky and
-preconditioning in quantum chemistry in section (4.1) of their paper
-\cite{díaz2024robustrandomizedpreconditioningkernel}. They show how RPChloesky and preconditioning can reduce the
+which is the case for most scietific applications. Diaz et al.\ analyse a specific case of using RPChloesky and
+preconditioning in quantum chemistry in section (4.1) of their paper \cite{diaz2024}. They show how RPChloesky and preconditioning can reduce the
 relative residual in a ridge regression task to an order of $10^{-2}$ in $100$ iterations, highlighting how good the
 method is. Also iterative solvers like the Conjugate Gradient method is proportional to the sqaure root of the condition
 number so achieveing a low condition number through preconditioning would be ideal for these solvers.
@@ -407,7 +406,7 @@ And so we have complated the proof showing that:
 
 \section{Question 4}
 The results of this section can be found by runnning the MATLAB script. The GitHub can be found at this
-[link](https://github.com/AaronDinesh/MATH-403/tree/master/final_project). To run the KRR in the script you must run
-``git submodule update --init --recursive'' and then follow the instuctions in this
-[repo](https://github.com/sunsided/mnist-matlab/tree/9fd29f6c632d3f715ac484ab30ccfa4bcd04dbef) to convert the MNIST
+\href{https://github.com/AaronDinesh/MATH-403/tree/master/final_project}{link}. To run the KRR in the script you must run
+``git submodule update --init --recursive" and then follow the instuctions in this
+\href{https://github.com/sunsided/mnist-matlab/tree/9fd29f6c632d3f715ac484ab30ccfa4bcd04dbef}{repo} to convert the MNIST
 dataset into something you can work with in matlab.
