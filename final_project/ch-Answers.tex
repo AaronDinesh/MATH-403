@@ -89,7 +89,7 @@ these space is $\lambda_{p-1} + \mu$. Now we have to find an expression for the 
     & \text{with } P^{-1} = (\lambda_{p-1}+\mu)U(\Lambda + \mu I)^{-1}U^{\top} + (I-UU^{\top})
 \end{align*}
 To find $\lambda_1(P^{-1})$ we perform a smilar arguement as before. On the subspace spanned by $U$ the largest
-eigenvalue is $(\lambda_{p-1} + \mu) \ (\lambda_{p-1} + \mu) = 1$ on the subspace spanned by $U_{\perp}$ we see that the
+eigenvalue is $(\lambda_{p-1} + \mu) / (\lambda_{p-1} + \mu) = 1$ on the subspace spanned by $U_{\perp}$ we see that the
 largest eigenvalue is also 1. So the largest eigenvalue attained on both these subspaces is 1, hence $\lambda_1(P^{-1})
 = 1$ and so we can say that $\lambda_1(\precondition{E}) = \lVert E \rVert_2$. So we arrive at the bound:
 \begin{align*}
@@ -167,7 +167,7 @@ Where $G \in \mathbb{R}^{m \times n}$ is a $(0, 1)$-Gaussian random matrix, $g, 
 Our first step is to analze the conditions regarding Slepian's Lemma. The two ocnditons of Slepian's Lemma are:
 \begin{align*}
     \mathds{E}\left[X_{u_1,v_1}X_{u_2,v_2}\right] &\leq \mathds{E}\left[ Y_{u_1,v_1}Y_{u_2, v_2}\right] \; \text{for } u_1 \neq u_2 \text{ and } v_1 \neq v_2 \\
-    \mathds{E}\left[X_{u,v}X_{u,v}\right] &\leq \mathds{E}\left[ Y_{u,v}Y_{u,v}\right]
+    \mathds{E}\left[X_{u,v}X_{u,v}\right] &= \mathds{E}\left[ Y_{u,v}Y_{u,v}\right]
 \end{align*}
 Let's first analyze the autocorrelation terms. For convenience sake we will abreviate $X_{u,v} = X_i$ similarly for
 $Y_{u, v}$
@@ -202,8 +202,8 @@ $Y_i$ will be analysed in the same way:
 \end{align*}
 The first and third terms are analysed in much the same way as before:
 \begin{align*}
-    \mathds{E}\left[ \lVert S \rVert^2 \lVert v \rVert^2 \gamma^2\right] &= \lVert S \rVert^2 \lVert v \rVert^2
-    \mathds{E}\left[ \langle u, Gv\rangle^2\right] = \lVert u \rVert^2 \lVert v \rVert^2
+    \mathds{E}\left[ \lVert S \rVert^2 \lVert v \rVert^2 \gamma^2\right] &= \lVert S \rVert^2 \lVert v \rVert^2 \\
+    \mathds{E}\left[ \langle u, Gv\rangle^2\right] &= \lVert u \rVert^2 \lVert v \rVert^2
 \end{align*}
 The second term can be analyzed in the same way as before:
 \begin{align*}
@@ -229,9 +229,9 @@ We can multiply and expand out the terms to get:
 \newcommand{\dotprod}[1]{\langle #1 \rangle}
 \begin{align*}
     X_1X_2 &= \lVert S \rVert^2 \langle h, v_1\rangle \langle h, v_2 \rangle + \lVert S \rVert \lVert v_2 \rVert \langle h, v_1 \rangle \langle g, u_2 \rangle \\ 
-           &= +\lVert S \rVert \lVert v_1 \rVert \langle h, v_2 \rangle \langle g, u_1 \rangle + \lVert v_1 \rVert \lVert v_2 \rVert \langle g, u_1 \rangle \langle g, u_2 \rangle \\
+           &+\lVert S \rVert \lVert v_1 \rVert \langle h, v_2 \rangle \langle g, u_1 \rangle + \lVert v_1 \rVert \lVert v_2 \rVert \langle g, u_1 \rangle \langle g, u_2 \rangle \\
     \pexp{X_1X_2} &= \lVert S \rVert^2\pexp{\langle h, v_1 \rangle \langle h, v_2\rangle} + \lVert S \rVert \lVert v_2\rVert \pexp{\langle h, v_1 \rangle \langle g, u_2 \rangle} \\ 
-                  &= + \lVert S \rVert \lVert v_1 \rVert \pexp{\langle h, v_2 \rangle \langle g, u_1 \rangle} + \lVert v_1 \rVert \lVert v_2 \rVert \pexp{\langle g, u_1 \rangle \langle g, u_2 \rangle}
+                  &+ \lVert S \rVert \lVert v_1 \rVert \pexp{\langle h, v_2 \rangle \langle g, u_1 \rangle} + \lVert v_1 \rVert \lVert v_2 \rVert \pexp{\langle g, u_1 \rangle \langle g, u_2 \rangle}
 \end{align*}
 Once again we can analyse this term by term. Looking at the first term we have:
 \begin{align*}
@@ -379,7 +379,7 @@ As we can see this is a perfect square. After factorizing we are left with the f
 \begin{align*}
     \pexp{\max\left\{ {(X_{uv})}_{+}^2\right\}} \leq \left( \norm{S}\norm{T}_F +\norm{T}\norm{S}_F\right)^2
 \end{align*}
-Next we use Corolary 3.12 on p.75 of \cite{Ledoux2011Probability} and some relations from probability to finish the question. The calculations of which
+Next we use Corolary 3.12 on p.75 of \cite{Ledoux2011Probability} and some relations from probability theory to finish the question. The calculations of which
 are listed below. Recall that for a random variable $Z$ we have:
 \begin{equation*}
     \pexp{Z^2} = \int_{0}^{\infty}{2x\mathbb{P}\left(Z > x \right)} dx

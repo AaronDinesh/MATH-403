@@ -380,3 +380,75 @@ predictedClasses = prediction > 0.5;
 accuracy = mean(predictedClasses == testLabels);
 fprintf('Test Accuracy: %.2f%%\n', accuracy * 100);
 
+%% Running Kernel Ridge Regression
+%This code performs KRR on the MNIST dataset to see if it can 
+%differentiate between 2 and 7. We use RPCholesky to reduce the number
+%of iterations to solve the system
+clear
+close all
+
+function K = genGaussianKernel(X, Y, sigma)
+
+    dist = pdist2(X, Y).^2;
+    K = exp(-dist/(2*sigma^2));
+end
+
+
+load("mnist-matlab\mnist.mat");
+
+trainImages = training.images;
+trainImages = double(trainImages) / 255.0;
+
+testImages = test.images;
+testImages = double(testImages) / 255.0;
+
+testLabels = test.labels;
+trainLabels = training.labels;
+
+width = test.width;
+height = test.height;
+
+numTrain = 10000;
+numTest = 500;
+trainImages = trainImages(:, : ,1:numTrain);
+testImages = testImages(:,:, 1:numTest);
+
+trainImages = reshape(trainImages, [], size(trainImages, 3)); %Flatten the Image dimension
+testImages = reshape(testImages, [], size(testImages, 3));
+
+%Reshape for compatability in pdist2 in genGaussianKernel
+trainImages = trainImages';
+testImages = testImages';
+
+trainLabels = trainLabels(1:numTrain);
+testLabels = testLabels(1:numTest);
+
+
+% Trying to see if KRR can figure out 2 and 7
+bool27 = or(testLabels == 2, testLabels == 7);
+testLabels = double(testLabels(bool27) > 2);
+testImages = testImages(bool27, :);
+
+bool27 = or(trainLabels == 2, trainLabels == 7);
+trainLabels = double(trainLabels(bool27) > 2);
+trainImages = trainImages(bool27, :);
+
+
+mu = 1e-7;
+sigma = 5;
+pcg_tol = 1e-16;
+
+train_kernel = genGaussianKernel(trainImages, trainImages, sigma);
+train_kernel = train_kernel + mu*eye(size(train_kernel, 1));
+fprintf("Running RPCholesky...\n")
+[~, ~, U, L] = rpCholeskey(train_kernel, 500);
+fprintf("Constructing Preconditioner...\n")
+P = genPreconditionerUL(U, L, mu);
+fprintf("Performimg PCG...\n")
+alpha = pcg(train_kernel, trainLabels, pcg_tol, 1000, P);
+
+test_kernel = genGaussianKernel(testImages, trainImages ,sigma);
+prediction = test_kernel * alpha;
+predictedClasses = prediction > 0.5;
+accuracy = mean(predictedClasses == testLabels);
+fprintf('Test Accuracy: %.2f%%\n', accuracy * 100);
